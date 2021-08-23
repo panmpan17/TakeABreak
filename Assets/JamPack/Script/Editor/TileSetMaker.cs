@@ -1,4 +1,4 @@
-﻿// #define HAS_2D_TILEMAP_EXTRA
+﻿#define HAS_2D_TILEMAP_EXTRA
 
 using System.Collections;
 using System.Collections.Generic;

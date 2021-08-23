@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 2095495111702307072}
   m_Layer: 6
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,9 +126,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 20
   m_AngularDrag: 0
-  m_GravityScale: 3
+  m_GravityScale: 13
   m_Material: {fileID: 6200000, guid: c117eb98dfaac4497a12e51ae169798a, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -168,9 +168,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sitPositionOffsetToChair: {x: 0, y: 0.29, z: 0}
-  walkAccelerate: 250
-  maxWalkSpeed: 8
-  jumpForce: 8
+  walkAccelerate: 100
+  maxWalkSpeed: 30
+  jumpForce: 20
+  keepJumpForcetimer:
+    TargetTime: 0.12
+    Running: 0
+    ReverseMode: 0
 --- !u!114 &2095495111702307072
 MonoBehaviour:
   m_ObjectHideFlags: 0

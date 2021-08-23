@@ -30,7 +30,9 @@ public abstract class AbstractInteractableCaller : MonoBehaviour
     {
         if (collider.CompareTag("Switch"))
         {
-            interactbles.Add(collider.GetComponent<IInteractble>());
+            IInteractble interact = collider.GetComponent<IInteractble>();
+            interact.OnPlayerEnter();
+            interactbles.Add(interact);
             collider.GetComponent<SpriteRenderer>().material.SetFloat("OutlineWidth", 0.04f);
         }
     }
@@ -39,7 +41,9 @@ public abstract class AbstractInteractableCaller : MonoBehaviour
     {
         if (collider.CompareTag("Switch"))
         {
-            interactbles.Remove(collider.GetComponent<IInteractble>());
+            IInteractble interact = collider.GetComponent<IInteractble>();
+            interact.OnPlayerExit();
+            interactbles.Remove(interact);
             collider.GetComponent<SpriteRenderer>().material.SetFloat("OutlineWidth", 0f);
         }
     }
@@ -58,12 +62,14 @@ public class PlayerControl : AbstractInteractableCaller
     public float walkAccelerate;
     public float maxWalkSpeed;
     public float jumpForce;
+    public Timer keepJumpForcetimer;
 
     private GhostControl ghost;
 
     private new Rigidbody2D rigidbody2D;
     private SmartBoxCollider smartCollider;
     private AseAnimator animator;
+
 
     private float originalGravityScale;
 
@@ -77,6 +83,7 @@ public class PlayerControl : AbstractInteractableCaller
         animator = GetComponent<AseAnimator>();
 
         originalGravityScale = rigidbody2D.gravityScale;
+        keepJumpForcetimer.Running = false;
     }
 
     void Start()
@@ -120,11 +127,11 @@ public class PlayerControl : AbstractInteractableCaller
 
         HandleMovement();
 
-        if (rigidbody2D.velocity.y >= 0.1f)
+        if (rigidbody2D.velocity.y >= 0.3f)
         {
             animator.Play(2);
         }
-        else if(rigidbody2D.velocity.y <= -0.1f)
+        else if(rigidbody2D.velocity.y <= -0.3f)
         {
             animator.Play(3);
         }
@@ -140,7 +147,7 @@ public class PlayerControl : AbstractInteractableCaller
 
     private void HandleMovement()
     {
-        Vector2 delta = new Vector2(0, rigidbody2D.velocity.y);
+        Vector2 delta = rigidbody2D.velocity;
 
         if (Input.GetKey(KeyCode.A)) delta.x -= walkAccelerate * Time.deltaTime;
         if (Input.GetKey(KeyCode.D)) delta.x += walkAccelerate * Time.deltaTime;
@@ -152,6 +159,20 @@ public class PlayerControl : AbstractInteractableCaller
 
         if (Input.GetKeyDown(KeyCode.Space) && smartCollider.DownTouched)
         {
+            delta.y = jumpForce;
+            keepJumpForcetimer.Reset();
+        }
+        if (keepJumpForcetimer.Running)
+        {
+            if (!Input.GetKey(KeyCode.Space))
+            {
+                keepJumpForcetimer.Running = false;
+                return;
+            }
+            if (keepJumpForcetimer.UpdateEnd)
+            {
+                keepJumpForcetimer.Running = false;
+            }
             delta.y = jumpForce;
         }
 

@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 2333680632396113999}
   m_Layer: 10
   m_Name: Ghost
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,7 +156,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0.2
+  m_LinearDrag: 4.5
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -197,5 +197,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54908a92d168b4af8b8ad4cda2e4d01f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: {x: 5, y: 5}
-  maxMoveSpeed: {x: 3, y: 3}
+  moveSpeed: {x: 17, y: 17}
+  maxMoveSpeed: {x: 4.5, y: 4.5}

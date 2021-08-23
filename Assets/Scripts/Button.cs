@@ -56,4 +56,6 @@ public class Button : MonoBehaviour, IInteractble
     public void HoldInteract() {
         stayOnTimer.Reset();
     }
+    public void OnPlayerEnter() { }
+    public void OnPlayerExit() { }
 }

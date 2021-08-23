@@ -16,11 +16,14 @@ public class Alarm : MonoBehaviour, IInteractble
 
     public float radius;
 
+    public GameObject rangeIndicate;
+
     void Awake()
     {
         pointer = transform.GetChild(0);
         ringTimer.Running = false;
         pointerRotateTimer.Timer.Running = false;
+        rangeIndicate.SetActive(false);
     }
 
     void Update()
@@ -68,5 +71,16 @@ public class Alarm : MonoBehaviour, IInteractble
     {
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, radius);
+    }
+
+    public void OnPlayerEnter()
+    {
+        rangeIndicate.SetActive(true);
+    }
+
+
+    public void OnPlayerExit()
+    {
+        rangeIndicate.SetActive(false);
     }
 }

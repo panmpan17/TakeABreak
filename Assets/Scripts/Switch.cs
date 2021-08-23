@@ -7,6 +7,8 @@ using UnityEngine.Events;
 public interface IInteractble {
     void Interact();
     void HoldInteract();
+    void OnPlayerEnter();
+    void OnPlayerExit();
 }
 
 
@@ -46,4 +48,6 @@ public class Switch : MonoBehaviour, IInteractble
     }
 
     public void HoldInteract() {}
+    public void OnPlayerEnter() {}
+    public void OnPlayerExit() { }
 }
