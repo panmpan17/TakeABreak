@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MPack;
+using UnityEngine.InputSystem;
 
 
 public class GhostControl : AbstractInteractableCaller
 {
-    public Vector2 moveSpeed;
-    public Vector2 maxMoveSpeed;
+    public float moveSpeed;
+    public float maxMoveSpeed;
 
     private PlayerControl playerControl;
 
@@ -16,55 +17,77 @@ public class GhostControl : AbstractInteractableCaller
     private new Rigidbody2D rigidbody2D;
     private SmartBoxCollider smartCollider;
 
+    private PlayerInput m_input;
+    private Vector2 m_movement;
+
+    private bool m_interactPressed = false;
+    private bool m_interactPressing = false;
+
     void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         smartCollider = GetComponent<SmartBoxCollider>();
         playerControl = FindObjectOfType<PlayerControl>();
+
+        m_input = new PlayerInput();
+
+        m_input.InTheAir.Delta.started += DeltaChanged;
+        m_input.InTheAir.Delta.performed += DeltaChanged;
+        m_input.InTheAir.Delta.canceled += DeltaChanged;
+
+        m_input.InTheAir.Interact.started += InteractButtonPressed;
+        m_input.InTheAir.Interact.canceled += InteractButtonReleased;
     }
+
+    #region Input
+    void OnEnable() { m_input.Enable(); }
+    void OnDisable() { m_input.Disable(); }
+
+    void DeltaChanged(InputAction.CallbackContext callback) { m_movement = callback.ReadValue<Vector2>(); }
+
+    void InteractButtonPressed(InputAction.CallbackContext callback) { m_interactPressed = true; }
+    void InteractButtonReleased(InputAction.CallbackContext callback) { m_interactPressing = false; }
+    #endregion
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (m_interactPressed)
         {
+            m_interactPressed = false;
+            m_interactPressing = true;
+
             if (chair)
             {
                 rigidbody2D.velocity = Vector2.zero;
                 gameObject.SetActive(false);
 
                 playerControl.WakeUp();
+                m_input.Disable();
             }
             else
             {
                 CallInteractble();
             }
         }
-        else if (Input.GetKey(KeyCode.E))
+        else if (m_interactPressing)
         {
             CallHoldInteract();
         }
 
         Vector2 delta = rigidbody2D.velocity;
 
-        if (Input.GetKey(KeyCode.A)) delta.x -= moveSpeed.x * Time.deltaTime;
-        if (Input.GetKey(KeyCode.D)) delta.x += moveSpeed.x * Time.deltaTime;
+        delta += m_movement * moveSpeed * Time.deltaTime;
 
-        if (delta.x > maxMoveSpeed.x) delta.x = maxMoveSpeed.x;
-        if (delta.x < -maxMoveSpeed.x) delta.x = -maxMoveSpeed.x;
-
-        if (delta.x > 0 && transform.localScale.x < 0) transform.localScale = new Vector3(1, 1, 1);
-        if (delta.x < 0 && transform.localScale.x > 0) transform.localScale = new Vector3(-1, 1, 1);
-
-        if (Input.GetKey(KeyCode.W)) delta.y += moveSpeed.y * Time.deltaTime;
-        if (Input.GetKey(KeyCode.S)) delta.y -= moveSpeed.y * Time.deltaTime;
-
-        if (delta.y > maxMoveSpeed.y) delta.y = maxMoveSpeed.y;
-        if (delta.y < -maxMoveSpeed.y) delta.y = -maxMoveSpeed.y;
+        delta.x = Mathf.Clamp(delta.x, -maxMoveSpeed, maxMoveSpeed);
+        delta.y = Mathf.Clamp(delta.y, -maxMoveSpeed, maxMoveSpeed);
 
         if (smartCollider.LeftTouched && delta.x < 0) delta.x = 0;
-        if (smartCollider.RightTouched && delta.x > 0) delta.x = 0;
+        else if (smartCollider.RightTouched && delta.x > 0) delta.x = 0;
         if (smartCollider.UpTouched && delta.y > 0) delta.y = 0;
-        if (smartCollider.DownTouched && delta.y < 0) delta.y = 0;
+        else if (smartCollider.DownTouched && delta.y < 0) delta.y = 0;
+
+        if (delta.x > 0 && transform.localScale.x < 0) transform.localScale = new Vector3(1, 1, 1);
+        else if (delta.x < 0 && transform.localScale.x > 0) transform.localScale = new Vector3(-1, 1, 1);
 
         rigidbody2D.velocity = delta;
     }
@@ -73,6 +96,7 @@ public class GhostControl : AbstractInteractableCaller
     {
         rigidbody2D.velocity = Vector2.zero;
         gameObject.SetActive(false);
+        m_input.Disable();
     }
 
     protected override void OnTriggerEnter2D(Collider2D collider)

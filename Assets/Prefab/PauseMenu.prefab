@@ -114,6 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17c47a067828e449cb7d16348faa019f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoFocusUIElement: {fileID: 8844392774038146224}
   menu: {fileID: 8844392773519304810}
 --- !u!1 &8844392773085102596
 GameObject:
@@ -849,7 +850,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}

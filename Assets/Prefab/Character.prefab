@@ -175,6 +175,10 @@ MonoBehaviour:
     TargetTime: 0.12
     Running: 0
     ReverseMode: 0
+  jumpPressTimer:
+    TargetTime: 0.1
+    Running: 0
+    ReverseMode: 0
 --- !u!114 &2095495111702307072
 MonoBehaviour:
   m_ObjectHideFlags: 0
